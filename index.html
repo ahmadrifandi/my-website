@@ -280,6 +280,31 @@
         
         <!-- Layar Pengaturan -->
         <div id="settings-screen" class="screen">
+            <!-- Layar Save -->
+<div id="save-screen" class="screen">
+            <h2>Save Game</h2>
+            <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+                <button class="button" onclick="saveGame(1)">Save Slot 1</button>
+                <button class="button" onclick="saveGame(2)">Save Slot 2</button>
+                <button class="button" onclick="saveGame(3)">Save Slot 3</button>
+                <button class="button" onclick="saveGame(4)">Save Slot 4</button>
+                <button class="button" onclick="saveGame(5)">Save Slot 5</button>
+            </div>
+            <button class="button back" onclick="goBack()">Kembali</button>
+        </div>
+        
+        <!-- Layar Load -->
+        <div id="load-screen" class="screen">
+            <h2>Load Game</h2>
+            <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+                <button class="button" onclick="loadGame(1)">Load Slot 1</button>
+                <button class="button" onclick="loadGame(2)">Load Slot 2</button>
+                <button class="button" onclick="loadGame(3)">Load Slot 3</button>
+                <button class="button" onclick="loadGame(4)">Load Slot 4</button>
+                <button class="button" onclick="loadGame(5)">Load Slot 5</button>
+            </div>
+            <button class="button back" onclick="goBack()">Kembali</button>
+        </div>
             <h2>Pengaturan</h2>
             <div class="settings-container">
                 <div class="setting-item">
@@ -576,6 +601,25 @@
                 }
                 startDialogue();
             }
+        }
+        // Fungsi Save Game
+        function saveGame(slot) {
+            const saveData = {
+                route: currentRoute,
+                dialogueIndex: currentDialogueIndex,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            // Simpan ke localStorage (atau tampilkan pesan)
+            alert(`Game berhasil disimpan di Slot ${slot}!\nRoute: ${currentRoute}\nDialog: ${currentDialogueIndex}`);
+            goBack();
+        }
+        
+        // Fungsi Load Game  
+        function loadGame(slot) {
+            // Placeholder untuk load game
+            alert(`Load Game dari Slot ${slot} - Fitur dalam pengembangan`);
+            goBack();
         }
 
         // Fungsi untuk melewatkan dialog
