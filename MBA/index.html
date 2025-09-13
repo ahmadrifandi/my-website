@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mimpi Basah Author - Dengan Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 900px;
+            height: 600px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            transition: opacity 0.5s;
+        }
+
+        .active {
+            display: flex;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 40px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #f8f8f8;
+        }
+
+        h2 {
+            font-size: 36px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #f8f8f8;
+        }
+
+        .button {
+            width: 250px;
+            padding: 15px 0;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+
+        .button:active {
+            transform: translateY(1px);
+        }
+
+        .button.rika {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+
+        .button.lina {
+            background: linear-gradient(135deg, #4ecdc4, #88d3ce);
+        }
+
+        .button.eka {
+            background: linear-gradient(135deg, #ffe66d, #fff6b6);
+            color: #333;
+        }
+
+        .button.back {
+            background: linear-gradient(135deg, #888, #aaa);
+            margin-top: 30px;
+        }
+
+        .dialog-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            cursor: pointer;
+        }
+
+        .dialog-box {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 150px;
+            position: relative;
+        }
+
+        .character-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .rika-name {
+            color: #ff8e8e;
+        }
+
+        .denish-name {
+            color: #6a11cb;
+        }
+
+        .narrator-name {
+            color: #4ecdc4;
+        }
+
+        .murid-name {
+            color: #ffe66d;
+        }
+
+        .dialog-text {
+            font-size: 20px;
+            line-height: 1.5;
+            min-height: 70px;
+        }
+
+        .continue-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 14px;
+            color: #aaa;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-btn {
+            width: 80px;
+            padding: 8px 0;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .background-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .background-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+            z-index: -1;
+        }
+
+        .background-loading {
+            filter: blur(5px);
+            opacity: 0.7;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            z-index: 100;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div class="background-overlay"></div>
+        <img src="https://placehold.co/900x600/2c3e50/FFFFFF/png?text=Memuat..." class="background-image" id="bg-image">
+        <div class="spinner" id="bg-spinner"></div>
+        
+        <!-- Menu Utama -->
+        <div id="main-menu" class="screen active">
+            <h1>Visual Novel Game</h1>
+            <button class="button" onclick="showScreen('route-selection')">Mulai</button>
+            <button class="button" onclick="showScreen('load-screen')">Load</button>
+            <button class="button" onclick="showScreen('settings-screen')">Pengaturan</button>
+            <button class="button" onclick="quitGame()">Quit</button>
+        </div>
+        
+        <!-- Pemilihan Rute -->
+        <div id="route-selection" class="screen">
+            <h2>Pilih Rute</h2>
+            <button class="button rika" onclick="startRoute('rika')">Rika</button>
+            <button class="button lina" onclick="startRoute('lina')">Lina</button>
+            <button class="button eka" onclick="startRoute('eka')">Eka</button>
+            <button class="button back" onclick="showScreen('main-menu')">Kembali</button>
+        </div>
+        
+        <!-- Layar Dialog Rika -->
+        <div id="rika-route" class="screen">
+            <div class="controls">
+                <button class="control-btn" onclick="skipDialogue()">Skip</button>
+                <button class="control-btn" onclick="showScreen('save-screen')">Save</button>
+                <button class="control-btn" onclick="showScreen('load-screen')">Load</button>
+                <button class="control-btn" onclick="showScreen('settings-screen')">Settings</button>
+                <button class="control-btn" onclick="quitGame()">Quit</button>
+            </div>
+            
+            <div class="dialog-container" onclick="nextDialogue()">
+                <div class="dialog-box">
+                    <div class="character-name" id="character-name"></div>
+                    <div class="dialog-text" id="dialog-text"></div>
+                    <div class="continue-indicator" id="continue-indicator">Klik untuk melanjutkan...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Layar Pengaturan -->
+        <div id="settings-screen" class="screen">
+            <h2>Pengaturan</h2>
+            <div class="settings-container">
+                <div class="setting-item">
+                    <label class="setting-label">Volume Musik</label>
+                    <input type="range" min="0" max="100" value="70" class="slider" id="music-volume">
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">Volume Suara</label>
+                    <input type="range" min="0" max="100" value="80" class="slider" id="sound-volume">
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">Kecepatan Teks</label>
+                    <input type="range" min="1" max="10" value="8" class="slider" id="text-speed">
+                </div>
+            </div>
+            <button class="button back" onclick="goBack()">Kembali</button>
+        </div>
+    </div>
+
+    <script>
+        // Data game
+        let currentScreen = 'main-menu';
+        let previousScreen = '';
+        let currentRoute = '';
+        let currentDialogueIndex = 0;
+        let textSpeed = 8;
+        let isTyping = false;
+        let typingInterval;
+
+        // Daftar background yang digunakan dalam game
+        const backgroundImages = {
+            'default': 'https://placehold.co/900x600/2c3e50/FFFFFF/png?text=Visual+Novel',
+            'sekolah': 'https://imgur.com/3UMiQj5.png',
+            'perpustakaan': 'https://imgur.com/fVQ59Nb',
+            'kelas': 'https://placehold.co/900x600/ffe66d/333333/png?text=Kelas',
+            'gerbang': 'https://placehold.co/900x600/6a11cb/FFFFFF/png?text=Gerbang+Sekolah'
+        };
+
+        // Data dialog - CERITA RIKA LENGKAP dengan background
+        const dialogues = {
+            rika: [
+                { 
+                    name: "Narator", 
+                    text: "Pagi hari di Sekolah Menengah Atas Permata.",
+                    background: "sekolah"
+                },
+                { 
+                    name: "Narator", 
+                    text: "Semua siswa dan siswi sedang ramai seperti biasa, karena salah satu murid paling popular di sekolah dating turun dari mobilnya dengan anggunnya.",
+                    background: "gerbang"
+                },
+                { 
+                    name: "Narator", 
+                    text: "Dia adalah Rika, salah satu anggota OSIS di sekolah ini. Rika adalah siswi yang rajin dan cantik, karena itu banyak yang mengagguminya.",
+                    background: "sekolah"
+                },
+                { 
+                    name: "Narator", 
+                    text: "Suatu hari saat aku sedang mencari buku di perpustakaan, ada kelompok anak yang selalu ramai di kelas sedang berisik di perpustakaan.",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Narator", 
+                    text: "Saat itu Rika yang juga sedang di perpus mendengar kebrisikan mereka.",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Rika", 
+                    text: "HEI KALIAN..... bisa diam nggak, kalian nggak tau ini di mana!",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Rika", 
+                    text: "Dari pada kalian berisik mending mending keluar saja! Kalian itu ganggu murid lain yang mau serius belajar.",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Murid Berisik", 
+                    text: "Lah salah sendiri datang pas ada kami weee....",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Murid Berisik", 
+                    text: "Situ saja sana keluar",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Rika", 
+                    text: "Kalau kalian masih berisik dan nggak mau keluar, nanti ku panggilin guru BK kalian!",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Murid Berisik", 
+                    text: "Ya tukang ngadu, yaa... Tukang ngadu... Tukang ngadu... Tukang ngadu... Aduin sana kalau berani",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Narator", 
+                    text: "Di kelompok itu ada satu anak orang kaya dari salah satu pemilik perusahaan besar di kota itu karena itu Rika tidak berani secara terang terangan karena dia sendiri murid beasiswa, takutnya nanti akan berpengaruh terhadap pendidikanya di sekolah itu",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Denish", 
+                    text: "Emang kalian berani kalau di aduin beneran!",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Narator", 
+                    text: "Yap saat itu aku juga terganggu dengan kebisingan itu pun ikut menegur mereka, jika mereka mau mengandalkan harta orang tua mereka, aku tidak takut, Aku sendiri adalah seorang trader besar di usia termuda saat ini, dan hanya sebagian orang di sekolah ini yang tahu termasuk para guru dan kepala sekolah, jadi mereka tidak bisa macam-macam",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Murid Berisik", 
+                    text: "Cih ada Denish, nggak asik udah ayo pergi saja!",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Narator", 
+                    text: "Mereka pun pergi dengan wajah kesal",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Rika", 
+                    text: "Hah syukurlah...",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Eka", 
+                    text: "Hah syukurlah...",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Rika", 
+                    text: "Untung dia juga ada di pihak kita",
+                    background: "perpustakaan"
+                },
+                { 
+                    name: "Narator", 
+                    text: "NUNGGU UPDATE KARENA YANG NULIS CERITA MASIH BINGUNG HA... HA... HA...",
+                    background: "sekolah"
+                },
+            ],
+            lina: [
+                { name: "Lina", text: "Maaf, rute Lina masih dalam pengembangan. Silakan coba lagi nanti!" }
+            ],
+            eka: [
+                { name: "Eka", text: "Maaf, rute Eka masih dalam pengembangan. Silakan coba lagi nanti!" }
+            ]
+        };
+
+        // Fungsi untuk menampilkan layar tertentu
+        function showScreen(screenId) {
+            document.getElementById(currentScreen).classList.remove('active');
+            previousScreen = currentScreen;
+            currentScreen = screenId;
+            document.getElementById(screenId).classList.add('active');
+            
+            // Jika masuk ke rute, mulai dialog
+            if (screenId === 'rika-route') {
+                startDialogue();
+            }
+        }
+
+        // Fungsi untuk kembali ke layar sebelumnya
+        function goBack() {
+            if (previousScreen) {
+                showScreen(previousScreen);
+            } else {
+                showScreen('main-menu');
+            }
+        }
+
+        // Fungsi untuk memulai rute
+        function startRoute(route) {
+            currentRoute = route;
+            if (route === 'rika') {
+                currentDialogueIndex = 0;
+                showScreen('rika-route');
+            } else {
+                // Untuk rute lain yang belum dikembangkan, tampilkan pesan
+                alert(`Rute ${route} masih dalam pengembangan!`);
+                showScreen('route-selection');
+            }
+        }
+
+        // Fungsi untuk mengubah background
+        function changeBackground(backgroundKey) {
+            const bgElement = document.getElementById('bg-image');
+            const spinner = document.getElementById('bg-spinner');
+            
+            // Tampilkan spinner loading
+            spinner.style.display = 'none';
+            bgElement.classList.add('background-loading');
+            
+            // Dapatkan URL background yang akan dimuat
+            const newBackgroundUrl = backgroundImages[backgroundKey] || backgroundImages['default'];
+            
+            // Preload gambar
+            const img = new Image();
+            img.onload = function() {
+                // Setel background setelah gambar selesai dimuat
+                bgElement.src = newBackgroundUrl;
+                bgElement.classList.remove('background-loading');
+                spinner.style.display = 'none';
+            };
+            
+            img.onerror = function() {
+                // Jika gagal memuat gambar, gunakan default
+                bgElement.src = backgroundImages['default'];
+                bgElement.classList.remove('background-loading');
+                spinner.style.display = 'none';
+            };
+            
+            img.src = newBackgroundUrl;
+        }
+
+        // Fungsi untuk memulai dialog
+        function startDialogue() {
+            if (currentDialogueIndex >= dialogues[currentRoute].length) {
+                currentDialogueIndex = 0; // Reset dialog jika sudah sampai akhir
+                return;
+            }
+            
+            const dialogue = dialogues[currentRoute][currentDialogueIndex];
+            const characterNameElement = document.getElementById('character-name');
+            characterNameElement.textContent = dialogue.name;
+            
+            // Set warna nama karakter berdasarkan siapa yang berbicara
+            if (dialogue.name === "Rika") {
+                characterNameElement.className = "character-name rika-name";
+            } else if (dialogue.name === "Denish") {
+                characterNameElement.className = "character-name denish-name";
+            } else if (dialogue.name === "Narator") {
+                characterNameElement.className = "character-name narrator-name";
+            } else if (dialogue.name === "Murid Berisik") {
+                characterNameElement.className = "character-name murid-name";
+            } else {
+                characterNameElement.className = "character-name";
+            }
+            
+            // Ubah background jika ada
+            if (dialogue.background) {
+                changeBackground(dialogue.background);
+            }
+            
+            // Sembunyikan indikator lanjut selama pengetikan
+            document.getElementById('continue-indicator').style.display = 'none';
+            
+            // Hentikan animasi mengetik sebelumnya jika ada
+            if (isTyping) {
+                clearInterval(typingInterval);
+            }
+            
+            // Animasi mengetik teks
+            const dialogTextElement = document.getElementById('dialog-text');
+            const fullText = dialogue.text;
+            let currentIndex = 0;
+            isTyping = true;
+            
+            // Hitung kecepatan mengetik berdasarkan pengaturan (lebih cepat dari sebelumnya)
+            const speed = Math.max(20, 300 - (textSpeed * 30));
+            
+            typingInterval = setInterval(() => {
+                if (currentIndex <= fullText.length) {
+                    dialogTextElement.textContent = fullText.substring(0, currentIndex);
+                    currentIndex++;
+                } else {
+                    clearInterval(typingInterval);
+                    isTyping = false;
+                    // Tampilkan indikator lanjut setelah selesai mengetik
+                    document.getElementById('continue-indicator').style.display = 'block';
+                }
+            }, speed);
+        }
+
+        // Fungsi untuk melanjutkan ke dialog berikutnya
+        function nextDialogue() {
+            if (isTyping) {
+                // Jika sedang mengetik, selesaikan pengetikan
+                clearInterval(typingInterval);
+                const dialogue = dialogues[currentRoute][currentDialogueIndex];
+                document.getElementById('dialog-text').textContent = dialogue.text;
+                isTyping = false;
+                // Tampilkan indikator lanjut
+                document.getElementById('continue-indicator').style.display = 'block';
+            } else {
+                // Jika tidak sedang mengetik, lanjut ke dialog berikutnya
+                currentDialogueIndex++;
+                if (currentDialogueIndex >= dialogues[currentRoute].length) {
+                    // Jika sudah sampai akhir cerita, kembalikan ke menu utama
+                    alert("Cerita Rika telah selesai. Terima kasih telah bermain!");
+                    showScreen('main-menu');
+                    return;
+                }
+                startDialogue();
+            }
+        }
+
+        // Fungsi untuk melewatkan dialog
+        function skipDialogue() {
+            // Langsung ke akhir cerita
+            currentDialogueIndex = dialogues[currentRoute].length - 1;
+            nextDialogue();
+        }
+
+        // Fungsi untuk keluar dari game
+        function quitGame() {
+            if (confirm('Apakah Anda yakin ingin keluar dari game?')) {
+                window.location.href = 'about:blank';
+            }
+        }
+
+        // Event listener untuk pengaturan
+        document.getElementById('text-speed').addEventListener('input', function() {
+            textSpeed = this.value;
+        });
+
+        // Inisialisasi
+        window.onload = function() {
+            // Set background default
+            changeBackground('default');
+        };
+    </script>
+</body>
+</html>
