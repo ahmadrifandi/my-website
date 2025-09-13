@@ -10,6 +10,14 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
+            /* Hilangkan highlight biru di mobile */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         body {
@@ -76,6 +84,10 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            /* Hilangkan outline dan highlight di mobile */
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .button:hover {
@@ -113,6 +125,9 @@
             flex-direction: column;
             justify-content: flex-end;
             cursor: pointer;
+            /* Hilangkan highlight di mobile */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .dialog-box {
@@ -186,6 +201,10 @@
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
+            /* Hilangkan outline dan highlight di mobile */
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .control-btn:hover {
