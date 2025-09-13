@@ -233,6 +233,58 @@
         @keyframes spin {
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
+
+        /* Settings styles */
+        .settings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .setting-label {
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .slider {
+            width: 200px;
+            height: 5px;
+            background: #ddd;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #6a11cb;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #6a11cb;
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -278,10 +330,8 @@
             </div>
         </div>
         
-        <!-- Layar Pengaturan -->
-        <div id="settings-screen" class="screen">
-            <!-- Layar Save -->
-<div id="save-screen" class="screen">
+        <!-- Layar Save -->
+        <div id="save-screen" class="screen">
             <h2>Save Game</h2>
             <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
                 <button class="button" onclick="saveGame(1)">Save Slot 1</button>
@@ -305,6 +355,9 @@
             </div>
             <button class="button back" onclick="goBack()">Kembali</button>
         </div>
+        
+        <!-- Layar Pengaturan -->
+        <div id="settings-screen" class="screen">
             <h2>Pengaturan</h2>
             <div class="settings-container">
                 <div class="setting-item">
@@ -602,36 +655,83 @@
                 startDialogue();
             }
         }
-        // Fungsi Save Game
+
+        // Fungsi Save Game - DIPERBAIKI
         function saveGame(slot) {
-            const saveData = {
-                route: currentRoute,
-                dialogueIndex: currentDialogueIndex,
-                timestamp: new Date().toLocaleString()
-            };
-            
-            // Simpan ke localStorage (atau tampilkan pesan)
-            alert(`Game berhasil disimpan di Slot ${slot}!\nRoute: ${currentRoute}\nDialog: ${currentDialogueIndex}`);
-            goBack();
+            try {
+                const saveData = {
+                    route: currentRoute,
+                    dialogueIndex: currentDialogueIndex,
+                    timestamp: new Date().toLocaleString(),
+                    textSpeed: textSpeed
+                };
+                
+                // Simpan ke variabel JavaScript (karena localStorage tidak tersedia)
+                window.gameSaves = window.gameSaves || {};
+                window.gameSaves[slot] = saveData;
+                
+                console.log('Game saved:', saveData); // Debug log
+                
+                // Tampilkan pesan sukses
+                alert(`✅ Game berhasil disimpan di Slot ${slot}!\n\nDetail:\n• Route: ${currentRoute || 'Tidak ada'}\n• Dialog ke-${currentDialogueIndex}\n• Waktu: ${saveData.timestamp}`);
+                
+                // Kembali ke layar sebelumnya
+                goBack();
+            } catch (error) {
+                console.error('Error saving game:', error);
+                alert('❌ Gagal menyimpan game. Silakan coba lagi.');
+            }
         }
         
-        // Fungsi Load Game  
+        // Fungsi Load Game - DIPERBAIKI
         function loadGame(slot) {
-            // Placeholder untuk load game
-            alert(`Load Game dari Slot ${slot} - Fitur dalam pengembangan`);
-            goBack();
+            try {
+                // Cek apakah ada data save
+                if (!window.gameSaves || !window.gameSaves[slot]) {
+                    alert(`❌ Tidak ada data save di Slot ${slot}`);
+                    return;
+                }
+                
+                const saveData = window.gameSaves[slot];
+                
+                // Konfirmasi load
+                if (confirm(`🔄 Load game dari Slot ${slot}?\n\nDetail:\n• Route: ${saveData.route}\n• Dialog ke-${saveData.dialogueIndex}\n• Disimpan: ${saveData.timestamp}`)) {
+                    // Restore data game
+                    currentRoute = saveData.route;
+                    currentDialogueIndex = saveData.dialogueIndex;
+                    textSpeed = saveData.textSpeed || 8;
+                    
+                    // Update slider text speed
+                    document.getElementById('text-speed').value = textSpeed;
+                    
+                    // Mulai game dari posisi yang disimpan
+                    if (currentRoute === 'rika') {
+                        showScreen('rika-route');
+                        startDialogue();
+                    } else {
+                        showScreen('route-selection');
+                    }
+                    
+                    alert(`✅ Game berhasil dimuat dari Slot ${slot}!`);
+                }
+            } catch (error) {
+                console.error('Error loading game:', error);
+                alert('❌ Gagal memuat game. Silakan coba lagi.');
+            }
         }
 
         // Fungsi untuk melewatkan dialog
         function skipDialogue() {
-            // Langsung ke akhir cerita
-            currentDialogueIndex = dialogues[currentRoute].length - 1;
-            nextDialogue();
+            if (confirm('⚠️ Apakah Anda yakin ingin melewati semua dialog?')) {
+                // Langsung ke akhir cerita
+                currentDialogueIndex = dialogues[currentRoute].length - 1;
+                nextDialogue();
+            }
         }
 
         // Fungsi untuk keluar dari game
         function quitGame() {
-            if (confirm('Apakah Anda yakin ingin keluar dari game?')) {
+            if (confirm('❓ Apakah Anda yakin ingin keluar dari game?')) {
                 window.location.href = 'about:blank';
             }
         }
@@ -639,17 +739,28 @@
         // Event listener untuk pengaturan
         document.getElementById('text-speed').addEventListener('input', function() {
             textSpeed = this.value;
+            console.log('Text speed changed to:', textSpeed); // Debug log
+        });
+
+        // Event listener untuk volume (placeholder)
+        document.getElementById('music-volume').addEventListener('input', function() {
+            console.log('Music volume:', this.value);
+        });
+
+        document.getElementById('sound-volume').addEventListener('input', function() {
+            console.log('Sound volume:', this.value);
         });
 
         // Inisialisasi
         window.onload = function() {
             // Set background default
             changeBackground('default');
+            
+            // Initialize game saves object
+            window.gameSaves = window.gameSaves || {};
+            
+            console.log('Game initialized successfully!'); // Debug log
         };
     </script>
 </body>
-
 </html>
-
-
-
