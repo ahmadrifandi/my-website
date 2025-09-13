@@ -314,11 +314,13 @@
         
         <!-- Menu Utama -->
         <div id="main-menu" class="screen active">
-            <h1>Visual Novel Game</h1>
+            <h1>Mimpi Basah Author</h1>
             <button class="button" onclick="showScreen('route-selection')">Mulai</button>
             <button class="button" onclick="showScreen('load-screen')">Load</button>
             <button class="button" onclick="showScreen('settings-screen')">Pengaturan</button>
             <button class="button" onclick="quitGame()">Quit</button>
+            <!-- Version text -->
+            <div style="position: absolute; bottom: 20px; right: 20px; font-size: 12px; color: rgba(255,255,255,0.6); font-weight: normal;">V. alpha 0.01</div>
         </div>
         
         <!-- Pemilihan Rute -->
@@ -337,6 +339,7 @@
                 <button class="control-btn" onclick="showScreen('save-screen')">Save</button>
                 <button class="control-btn" onclick="showScreen('load-screen')">Load</button>
                 <button class="control-btn" onclick="showScreen('settings-screen')">Settings</button>
+                <button class="control-btn" onclick="backToMainMenu()">Menu</button>
                 <button class="control-btn" onclick="quitGame()">Quit</button>
             </div>
             
@@ -537,6 +540,18 @@
             // Jika masuk ke rute, mulai dialog
             if (screenId === 'rika-route') {
                 startDialogue();
+            }
+        }
+
+        // Fungsi untuk kembali ke menu utama dengan konfirmasi
+        function backToMainMenu() {
+            if (confirm('🏠 Kembali ke menu utama?\n\nProgress yang belum disimpan akan hilang.')) {
+                // Reset game state
+                currentDialogueIndex = 0;
+                currentRoute = '';
+                
+                // Kembali ke menu utama
+                showScreen('main-menu');
             }
         }
 
